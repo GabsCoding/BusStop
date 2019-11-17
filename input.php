@@ -15,7 +15,7 @@ class Incluir{
       array_shift($arq1);
       array_shift($arq2);
       array_shift($arq3);
-      $arq =[$arq1, $arq2, $arq3];
+      $arquivo = [$arq1, $arq2, $arq3];
       // $i = 0;
       // $len = 0;
       // foreach ($titulos as $linha) {
@@ -32,14 +32,28 @@ class Incluir{
       //   $i += 1;
       //   $pdo->exec($sql);
         //   }
-        foreach ($arq as $linha) {
-          foreach ($linha as $value) {
-            foreach ($ as $value) {
-
+        $i = 0;
+        $len = 0;
+        foreach ($arquivo as $arq){
+          foreach ($arq as $linha){
+            $conteudo = explode(",", $linha);
+            $sql = "INSERT INTO "."`".$nomes[$i]."`"." VALUES(";
+            foreach ($conteudo as $dado){
+              if(!(count($conteudo) == $len+1)){
+                $sql .= $dado.",";
+              }else{
+                $sql .= $dado;
+              }
+              $len++;
             }
+            $sql .= ");";
+            $pdo->exec($sql);
+            $len = 0;
+            //echo $sql."\n";
+            //$i++;
           }
         }
-         }
-      }
-    }
+     }
+  }
+}
  ?>
