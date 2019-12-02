@@ -1,59 +1,28 @@
 <?php
-include_once "banco.php";
-
 class Incluir{
   public function inserir(){
-    $obj = new Banco();
-    $pdo = $obj->connect();
-    if($pdo != null){
-      $nomes = ["routes", "shapes", "stops"];
-      $arq1 = file("arquivos/".$nomes[0].".txt");
-      $arq2 = file("arquivos/".$nomes[1].".txt");
-      $arq3 = file("arquivos/".$nomes[2].".txt");
+    $banco = new mysqli("localhost","root","", "bus"); //Conecção com o banco
+    if(!$banco){ //Caso dê Erro
+      die("ERRO ". $banco->error); //Para a execução
+    }else{ //Caso Contrário
+      $nomes = ["routes", "shapes", "stops"]; //Pega os títulos em um array
 
-      //$titulos = [explode(",", $arq1[0]), explode(",", $arq2[0]), explode(",", $arq3[0])];
-      array_shift($arq1);
-      array_shift($arq2);
-      array_shift($arq3);
-      $arquivo = [$arq1, $arq2, $arq3];
-      // $i = 0;
-      // $len = 0;
-      // foreach ($titulos as $linha) {
-      //   $sql = "CREATE TABLE $nomes[$i]{";
-      //   foreach ($linha as $valor) {
-      //     if($len+1 == count($linha)){
-      //       $sql .= $valor." VARCHAR(60)";
-      //     }else{
-      //       $sql .= $valor." VARCHAR(60),";
-      //     }
-      //   }
-      //   $sql .= "}";
-      //   $len = 0;
-      //   $i += 1;
-      //   $pdo->exec($sql);
-        //   }
-        $i = 0;
-        $len = 0;
-        foreach ($arquivo as $arq){
-          foreach ($arq as $linha){
-            $conteudo = explode(",", $linha);
-            $sql = "INSERT INTO "."`".$nomes[$i]."`"." VALUES(";
-            foreach ($conteudo as $dado){
-              if(!(count($conteudo) == $len+1)){
-                $sql .= $dado.",";
-              }else{
-                $sql .= $dado;
-              }
-              $len++;
+      foreach ($nomes as $nome){ //Para cada valor no array
+        $arq = fopen("arquivos/$nome.txt", "r"); //Abre um arquivo para leitura
+
+        while(($dados = fgetcsv($arq, 0, ",")) != false){ //Retorna cada linha do arquivo
+            $sql = "INSERT INTO $nome VALUES";
+            $sql .= "(";
+            foreach ($dados as $dado){ //Para cada valor
+              $sql .= $dado.","; //O valor a ser inserido
             }
-            $sql .= ");";
-            $pdo->exec($sql);
-            $len = 0;
-            //echo $sql."\n";
-            //$i++;
-          }
+            $sql = substr($sql, 0, -1); //Retira a última virgula
+            $sql .= ")"; //Acrescenta o parenteses final
+            $banco->query($sql); //Executa a query
         }
-     }
+      }
+    }
   }
 }
+
  ?>
