@@ -5,6 +5,7 @@ class Incluir{
     if(!$banco){ //Caso dê Erro
       die("ERRO ". $banco->error); //Para a execução
     }else{ //Caso Contrário
+      
       $nomes = ["routes", "shapes", "stops"]; //Pega os títulos em um array
 
       foreach ($nomes as $nome){ //Para cada valor no array
